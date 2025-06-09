@@ -2,7 +2,24 @@ import tkinter as tk
 from gui import GameGUI, SettingsWindow
 from settings import GameSettings
 
+"""
+Główna aplikacja Gra w Życie Conwaya.
+
+Moduł uruchamia interfejs GUI gry oraz umożliwia sterowanie grą poprzez przyciski.
+
+Funkcje:
+- Start/Stop: Uruchamia lub zatrzymuje grę.
+- Wyczyść: Resetuje planszę.
+- Zapisz/Wczytaj: Obsługa zapisu i odczytu stanu gry z pliku.
+- Ustawienia: Modyfikacja rozmiaru planszy i szybkości gry.
+"""
+
 def main():
+    """
+    Uruchamia główne okno aplikacji oraz inicjalizuje GUI gry.
+
+    Tworzy przyciski sterujące, obsługuje zamykanie i otwieranie okna ustawień.
+    """
     root = tk.Tk()
     root.title("Gra w Życie - Conway")
     settings = GameSettings(rows=30, cols=30, speed=200)

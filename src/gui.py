@@ -5,7 +5,18 @@ from settings import GameSettings
 
 
 class GameGUI:
+    """
+      Graficzny interfejs użytkownika do gry w życie Conwaya.
+
+      :param root: Główne okno aplikacji tkinter.
+      :type root: tkinter.Tk
+      :param settings: Ustawienia gry.
+      :type settings: GameSettings
+      """
     def __init__(self, root, settings):
+        """
+               Inicjalizuje GUI oraz planszę do rysowania.
+               """
         self.root = root
         self.settings = settings
         self.game = GameOfLife(settings)
@@ -23,12 +34,22 @@ class GameGUI:
         self.root.after(settings.speed, self.update_game)
 
     def on_canvas_click(self, event):
+        """
+              Obsługuje kliknięcie myszy w celu zmiany stanu komórki.
+
+              :param event: Obiekt zdarzenia tkinter.
+              :type event: tkinter.Event
+              """
         col = event.x // self.cell_width
         row = event.y // self.cell_height
         self.game.toggle_cell(row, col)
         self.draw_grid()
 
     def draw_grid(self):
+        """
+               Rysuje siatkę gry na canvasie.
+               """
+
         self.canvas.delete("all")
         for r in range(self.settings.rows):
             for c in range(self.settings.cols):
@@ -40,21 +61,33 @@ class GameGUI:
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="gray")
 
     def update_game(self):
+        """
+              Aktualizuje siatkę i harmonogramuje następne odświeżenie.
+              """
         if self.running:
             self.game.update()
             self.draw_grid()
         self.root.after(self.settings.speed, self.update_game)
 
     def toggle_run(self):
+        """
+               Uruchamia lub zatrzymuje grę.
+               """
         self.running = not self.running
 
     def save_on_exit(self):
-        filename = "autosave.txt"
+        """
+              Automatyczny zapis stanu gry przy zamykaniu aplikacji.
+              """
+        filename = "../autosave.txt"
         with open(filename, 'w') as f:
             for row in self.game.grid:
                 f.write(''.join(str(cell) for cell in row) + '\n')
 
     def save_grid(self):
+        """
+               Zapisuje aktualną siatkę do pliku.
+               """
         filename = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text Files", "*.txt")]
@@ -65,6 +98,9 @@ class GameGUI:
                     f.write(''.join(str(cell) for cell in row) + '\n')
 
     def load_grid(self):
+        """
+               Wczytuje siatkę gry z pliku.
+               """
         filename = filedialog.askopenfilename(
             defaultextension=".txt",
             filetypes=[("Text Files", "*.txt")]
@@ -80,7 +116,20 @@ class GameGUI:
 
 
 class SettingsWindow:
+    """
+       Okno dialogowe do zmiany ustawień gry.
+
+       :param master: Okno nadrzędne.
+       :type master: tkinter.Tk
+       :param current_settings: Obecne ustawienia gry.
+       :type current_settings: GameSettings
+       :param on_apply: Funkcja wywoływana po zatwierdzeniu zmian.
+       :type on_apply: Callable
+       """
     def __init__(self, master, current_settings, on_apply):
+        """
+               Inicjalizuje GUI okna ustawień.
+               """
         self.top = tk.Toplevel(master)
         self.top.title("Ustawienia gry")
         self.on_apply = on_apply
@@ -105,6 +154,9 @@ class SettingsWindow:
         tk.Button(self.top, text="Zastosuj", command=self.apply).grid(row=3, column=0, columnspan=2, pady=10)
 
     def apply(self):
+        """
+                Zatwierdza zmiany i aktualizuje ustawienia gry.
+                """
         try:
             rows = int(self.rows_entry.get())
             cols = int(self.cols_entry.get())
