@@ -21,7 +21,8 @@ class GameOfLife:
                       (1, -1),  (1, 0), (1, 1)]
         count = 0
         for dr, dc in directions:
-            nr, nc = (r + dr) % self.rows, (c + dc) % self.cols
+            nr= (r + dr) % self.rows
+            nc = (c + dc) % self.cols
             count += self.grid[nr][nc]
         return count
 
