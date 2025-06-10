@@ -17,18 +17,22 @@ class GameGUI:
         """
                Inicjalizuje GUI oraz planszę do rysowania.
                """
+
         self.root = root
         self.settings = settings
         self.game = GameOfLife(settings)
         self.running = False
 
-        self.canvas = tk.Canvas(root, width=900, height=900, bg="white")
+        self.canvas = tk.Canvas(root, width=1200, height=1000, bg="white")
         self.canvas.pack()
 
         self.cell_width = self.canvas.winfo_reqwidth() // settings.cols
         self.cell_height = self.canvas.winfo_reqheight() // settings.rows
 
         self.canvas.bind("<Button-1>", self.on_canvas_click)
+        self.canvas.bind("<B1-Motion>", self.on_canvas_drag)
+        self.canvas.bind("<B3-Motion>", self.on_canvas_erase)
+
         self.draw_grid()
 
         self.root.after(settings.speed, self.update_game)
@@ -44,6 +48,36 @@ class GameGUI:
         row = event.y // self.cell_height
         self.game.toggle_cell(row, col)
         self.draw_grid()
+
+    def on_canvas_drag(self, event):
+        """
+          Pozwala na malowanie (zmianę stanu komórki) podczas przeciągania myszy.
+
+          :param event: Obiekt zdarzenia tkinter.
+          :type event: tkinter.Event
+          """
+        col = event.x // self.cell_width
+        row = event.y // self.cell_height
+
+
+        if 0 <= row < self.settings.rows and 0 <= col < self.settings.cols:
+
+            self.game.grid[row][col] = 1
+            self.draw_grid()
+
+    def on_canvas_erase(self, event):
+        """
+        Pozwala na wymazywanie (ustawianie komórek jako martwe) podczas przeciągania myszy.
+
+        :param event: Obiekt zdarzenia tkinter.
+        :type event: tkinter.Event
+        """
+
+        col = event.x // self.cell_width
+        row = event.y // self.cell_height
+        if 0 <= row < self.settings.rows and 0 <= col < self.settings.cols:
+            self.game.grid[row][col] = 0
+            self.draw_grid()
 
     def draw_grid(self):
         """
